@@ -11,16 +11,13 @@ esphome:
 
 esp8266:
   board: d1_mini_pro
-  # board: esp01_1m
+
 wifi:
-  ssid: "ap-garaz"
-  password: "DajMiGecoNaPleco"
+  ssid: "your-WiFi-SSID"
+  password: "your-WiFi-password"
 
 ota:
-
 logger:
-#  level: INFO
-
 api:
 
 mqtt:
@@ -269,6 +266,7 @@ sensor:
     name: "Earth Relay"
     icon: mdi:electric-switch
 
+# statistics sensors
   - platform: modbus_controller
     address: 25246
     register_type: holding
