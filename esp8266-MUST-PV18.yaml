@@ -11,16 +11,13 @@ esphome:
 
 esp8266:
   board: d1_mini_pro
-  # board: esp01_1m
+
 wifi:
-  ssid: "ap-garaz"
-  password: "DajMiGecoNaPleco"
+  ssid: "your-WiFi-SSID"
+  password: "your-WiFi-password"
 
 ota:
-
 logger:
-#  level: INFO
-
 api:
 
 mqtt:
@@ -94,8 +91,6 @@ sensor:
     unit_of_measurement: "W"
     accuracy_decimals: 1
     icon: mdi:flash
-    filters:
-      multiply: 0.1
   - platform: modbus_controller
     address: 15211
     register_type: holding
@@ -114,7 +109,7 @@ sensor:
     icon: mdi:flash
     filters:
       multiply: 0.1
-# 15217		RO	Accumulated power high	1000KWH
+# 15217	RO  Accumulated power high  1000KWH
 
 # inverter sensors
   - platform: modbus_controller
@@ -222,14 +217,14 @@ sensor:
     accuracy_decimals: 1
     icon: mdi:flash
 
-    # 25217 : ["Inverter complex power(S)", 1, "VA"],
-    # 25218 : ["Grid complex power(S)", 1, "VA"],
-    # 25219 : ["Load complex power(S)", 1, "VA"],
-    # 25221 : ["Inverter reactive power(Q)", 1, "var"],
-    # 25222 : ["Grid reactive power(Q)", 1, "var"],
-    # 25223 : ["Load reactive power(Q)", 1, "var"],
-    # 25225 : ["Inverter frequency", 0.01, "Hz"],
-    # 25226 : ["Grid frequency", 0.01, "Hz"],
+# 25217 Inverter complex power(S)	1	VA
+# 25218 Grid complex power(S)		1	VA
+# 25219 Load complex power(S)		1	VA
+# 25221 Inverter reactive power(Q)	1	var
+# 25222 Grid reactive power(Q)		1	var
+# 25223 Load reactive power(Q)		1	var
+# 25225 Inverter frequency			0.01	Hz
+# 25226 Grid frequency				0.01	Hz
 
   - platform: modbus_controller
     address: 25233
