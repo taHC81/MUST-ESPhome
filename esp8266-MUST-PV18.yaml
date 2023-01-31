@@ -351,6 +351,7 @@ sensor:
   - platform: modbus_controller
     address: 25273
     register_type: holding
+    value_type: S_WORD
     name: "Battery power"
     unit_of_measurement: "W"
     accuracy_decimals: 1
@@ -358,6 +359,7 @@ sensor:
   - platform: modbus_controller
     address: 25274
     register_type: holding
+    value_type: S_WORD
     name: "Battery current"
     unit_of_measurement: "A"
     accuracy_decimals: 1
