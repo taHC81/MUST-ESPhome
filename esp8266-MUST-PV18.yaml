@@ -43,7 +43,13 @@ modbus_controller:
     setup_priority: -10
     update_interval: 2s
 
+switch:
+  - platform: restart
+    name: "ESPhome PV18 Restart"
+
 sensor:
+  - platform: uptime
+    name: Uptime Sensor
 # charger sensors
   - platform: modbus_controller
     address: 15201
@@ -201,6 +207,7 @@ sensor:
     register_type: holding
     unit_of_measurement: "W"
     accuracy_decimals: 1
+    value_type: S_WORD
     icon: mdi:flash
   - platform: modbus_controller
     address: 25215
