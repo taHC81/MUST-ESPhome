@@ -1,0 +1,23 @@
+# templates for Home assistant, grouped state
+
+template:
+  - sensor:
+      - name: "Inverter status"
+        unique_id: fve.inverter_status_grouped
+        state: >
+          {{ states("sensor.inverter_work_state_3") + ' | ' + states("sensor.charger_workstate_text") }}
+
+      - name: "Charger status"
+        unique_id: fve.charger_status_grouped
+        state: >
+          {{ states("sensor.mppt_work_state_text")  + ' | ' + states("sensor.charging_state_text") }}
+
+      - name: "Battery status"
+        unique_id: fve.inv_battery_status_grouped
+        state: >
+          {{ states("sensor.battery_voltage_2") + 'V | ' + states("sensor.battery_current") + 'A | ' + states("sensor.battery_power") + 'W' }}
+
+      - name: "PV status"
+        unique_id: fve.pv_status_grouped
+        state: >
+          {{ states("sensor.pv_voltage_2") + 'V | ' + states("sensor.charger_current") + 'A | ' + states("sensor.charger_power") + 'W' }}
