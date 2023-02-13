@@ -1,4 +1,4 @@
-# templates for Home assistant, grouped state
+# additional templates for Home assistant, grouped state
 
 template:
   - sensor:
