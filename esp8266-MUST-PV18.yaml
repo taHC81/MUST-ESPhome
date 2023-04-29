@@ -10,11 +10,15 @@ esphome:
     version: 1.0.0
 
 esp8266:
-  board: d1_mini_pro
+  board: esp01_1m
+  # board: d1_mini_pro
 
 wifi:
-  ssid: "your-WiFi-SSID"
-  password: "your-WiFi-password"
+  networks:
+  - ssid: !secret wifi_ssid
+    password: !secret wifi_password
+  # - ssid: !secret wifi_ssid_garage
+    # password: !secret wifi_password
 
 ota:
 logger:
@@ -41,7 +45,7 @@ modbus_controller:
     address: 0x4
     modbus_id: mod_bus_must
     setup_priority: -10
-    update_interval: 2s
+    update_interval: 3s
 
 switch:
   - platform: restart
@@ -97,25 +101,43 @@ sensor:
     unit_of_measurement: "W"
     accuracy_decimals: 1
     icon: mdi:flash
+  # - platform: modbus_controller
+    # address: 15211
+    # register_type: holding
+    # name: "Battery Relay"
+  # - platform: modbus_controller
+    # address: 15212
+    # register_type: holding
+    # name: "PV Relay"
+    # icon: mdi:electric-switch
+
   - platform: modbus_controller
-    address: 15211
+    address: 15217
     register_type: holding
-    name: "Battery Relay"
-  - platform: modbus_controller
-    address: 15212
-    register_type: holding
-    name: "PV Relay"
-    icon: mdi:electric-switch
+    # name: "Accumulated charger power MWh"
+    id: charger_total_mwh
+    internal: true
+    # unit_of_measurement: "MWh"
+    # accuracy_decimals: 1
+    # icon: mdi:flash
   - platform: modbus_controller
     address: 15218
     register_type: holding
-    name: "Accumulated charger power"
-    unit_of_measurement: "kW"
-    accuracy_decimals: 1
-    icon: mdi:flash
+    # name: "Accumulated charger power kWh"
+    id: charger_total_kwh
+    internal: true
+    # unit_of_measurement: "kWh"
+    # accuracy_decimals: 1
+    # icon: mdi:flash
     filters:
       multiply: 0.1
-# 15217	RO  Accumulated power high  1000KWH
+
+  - platform: template
+    name: "Accumulated charger power"
+    unit_of_measurement: kWh
+    lambda: |-
+     return (id(charger_total_mwh).state * 1000.0 + id(charger_total_kwh).state );
+    accuracy_decimals: 1
 
 # inverter sensors
   - platform: modbus_controller
@@ -149,51 +171,51 @@ sensor:
     icon: mdi:sine-wave
     filters:
       multiply: 0.1
-  - platform: modbus_controller
-    address: 25208
-    name: "Bus voltage"
-    register_type: holding
-    unit_of_measurement: "V"
-    accuracy_decimals: 1
-    icon: mdi:sine-wave
-    filters:
-      multiply: 0.1
-  - platform: modbus_controller
-    address: 25209
-    name: "Control current"
-    register_type: holding
-    unit_of_measurement: "A"
-    accuracy_decimals: 1
-    icon: mdi:current-dc
-    filters:
-      multiply: 0.1
-  - platform: modbus_controller
-    address: 25210
-    name: "Inverter current"
-    register_type: holding
-    unit_of_measurement: "A"
-    accuracy_decimals: 1
-    icon: mdi:current-dc
-    filters:
-      multiply: 0.1
-  - platform: modbus_controller
-    address: 25211
-    name: "Grid current"
-    register_type: holding
-    unit_of_measurement: "A"
-    accuracy_decimals: 1
-    icon: mdi:current-dc
-    filters:
-      multiply: 0.1
-  - platform: modbus_controller
-    address: 25212
-    name: "Load current"
-    register_type: holding
-    unit_of_measurement: "A"
-    accuracy_decimals: 1
-    icon: mdi:current-dc
-    filters:
-      multiply: 0.1
+  # - platform: modbus_controller
+    # address: 25208
+    # name: "Bus voltage"
+    # register_type: holding
+    # unit_of_measurement: "V"
+    # accuracy_decimals: 1
+    # icon: mdi:sine-wave
+    # filters:
+      # multiply: 0.1
+  # - platform: modbus_controller
+    # address: 25209
+    # name: "Control current"
+    # register_type: holding
+    # unit_of_measurement: "A"
+    # accuracy_decimals: 1
+    # icon: mdi:current-dc
+    # filters:
+      # multiply: 0.1
+  # - platform: modbus_controller
+    # address: 25210
+    # name: "Inverter current"
+    # register_type: holding
+    # unit_of_measurement: "A"
+    # accuracy_decimals: 1
+    # icon: mdi:current-dc
+    # filters:
+      # multiply: 0.1
+  # - platform: modbus_controller
+    # address: 25211
+    # name: "Grid current"
+    # register_type: holding
+    # unit_of_measurement: "A"
+    # accuracy_decimals: 1
+    # icon: mdi:current-dc
+    # filters:
+      # multiply: 0.1
+  # - platform: modbus_controller
+    # address: 25212
+    # name: "Load current"
+    # register_type: holding
+    # unit_of_measurement: "A"
+    # accuracy_decimals: 1
+    # icon: mdi:current-dc
+    # filters:
+      # multiply: 0.1
   - platform: modbus_controller
     address: 25213
     name: "Inverter power"
@@ -233,128 +255,235 @@ sensor:
 # 25225 Inverter frequency			0.01	Hz
 # 25226 Grid frequency				0.01	Hz
 
-  - platform: modbus_controller
-    address: 25233
-    register_type: holding
-    name: "AC radiator temp"
-    accuracy_decimals: 1
-    unit_of_measurement: "°C"
-  - platform: modbus_controller
-    address: 25234
-    register_type: holding
-    name: "Transformer temp"
-    unit_of_measurement: "°C"
-    accuracy_decimals: 1
-  - platform: modbus_controller
-    address: 25235
-    register_type: holding
-    name: "DC Radiator temp"
-    unit_of_measurement: "°C"
-    accuracy_decimals: 1
-  - platform: modbus_controller
-    address: 25237
-    register_type: holding
-    name: "Inverter Relay"
-    icon: mdi:electric-switch
-  - platform: modbus_controller
-    address: 25238
-    register_type: holding
-    name: "Grid Relay"
-    icon: mdi:electric-switch
-  - platform: modbus_controller
-    address: 25239
-    register_type: holding
-    name: "Load Relay"
-    icon: mdi:electric-switch
-  - platform: modbus_controller
-    address: 25240
-    register_type: holding
-    name: "N_Line Relay"
-    icon: mdi:electric-switch
-  - platform: modbus_controller
-    address: 25241
-    register_type: holding
-    name: "DC Relay"
-    icon: mdi:electric-switch
-  - platform: modbus_controller
-    address: 25242
-    register_type: holding
-    name: "Earth Relay"
-    icon: mdi:electric-switch
-
-# statistics sensors
   # - platform: modbus_controller
-    # address: 25246
+    # address: 25233
     # register_type: holding
-    # name: "Accumulated charger power"
-    # unit_of_measurement: "kW"
+    # name: "AC radiator temp"
+    # accuracy_decimals: 1
+    # unit_of_measurement: "°C"
+  # - platform: modbus_controller
+    # address: 25234
+    # register_type: holding
+    # name: "Transformer temp"
+    # unit_of_measurement: "°C"
+    # accuracy_decimals: 1
+  # - platform: modbus_controller
+    # address: 25235
+    # register_type: holding
+    # name: "DC Radiator temp"
+    # unit_of_measurement: "°C"
+    # accuracy_decimals: 1
+  # - platform: modbus_controller
+    # address: 25237
+    # register_type: holding
+    # name: "Inverter Relay"
+    # icon: mdi:electric-switch
+  # - platform: modbus_controller
+    # address: 25238
+    # register_type: holding
+    # name: "Grid Relay"
+    # icon: mdi:electric-switch
+  # - platform: modbus_controller
+    # address: 25239
+    # register_type: holding
+    # name: "Load Relay"
+    # icon: mdi:electric-switch
+  # - platform: modbus_controller
+    # address: 25240
+    # register_type: holding
+    # name: "N_Line Relay"
+    # icon: mdi:electric-switch
+  # - platform: modbus_controller
+    # address: 25241
+    # register_type: holding
+    # name: "DC Relay"
+    # icon: mdi:electric-switch
+  # - platform: modbus_controller
+    # address: 25242
+    # register_type: holding
+    # name: "Earth Relay"
+    # icon: mdi:electric-switch
+
+  - platform: modbus_controller
+    address: 25247
+    register_type: holding
+    # name: "Accumulated discharger power MWh"
+    id: discharger_total_mwh
+    internal: true
+    # unit_of_measurement: "MWh"
+    # icon: mdi:flash
+  - platform: modbus_controller
+    address: 25248
+    register_type: holding
+    # name: "Accumulated discharger power kWh"
+    id: discharger_total_kwh
+    internal: true
+    # unit_of_measurement: "kWh"
+    # accuracy_decimals: 1
+    # icon: mdi:flash
+    filters:
+      multiply: 0.1
+  - platform: template
+    name: "Accumulated discharger power"
+    unit_of_measurement: kWh
+    lambda: |-
+     return (id(discharger_total_mwh).state * 1000.0 + id(discharger_total_kwh).state );
+    accuracy_decimals: 1
+
+  - platform: modbus_controller
+    address: 25249
+    register_type: holding
+    # name: "Accumulated buy power MWh"
+    id: buy_mwh
+    internal: true
+    # unit_of_measurement: "MWh"
+    # accuracy_decimals: 1
+    # icon: mdi:flash
+  - platform: modbus_controller
+    address: 25250
+    register_type: holding
+    # name: "Accumulated buy power kWh"
+    id: buy_kwh
+    internal: true
+    # unit_of_measurement: "kWh"
+    # accuracy_decimals: 1
+    # icon: mdi:flash
+    filters:
+      multiply: 0.1
+  - platform: template
+    name: "Accumulated buy power"
+    unit_of_measurement: kWh
+    lambda: |-
+     return (id(buy_mwh).state * 1000.0 + id(buy_kwh).state );
+    accuracy_decimals: 1
+
+  # - platform: modbus_controller
+    # address: 25251
+    # register_type: holding
+    # name: "Accumulated sell power MWh"
+    # id: sell_mwh
+    # unit_of_measurement: "MWh"
+    # accuracy_decimals: 1
+    # icon: mdi:flash
+  # - platform: modbus_controller
+    # address: 25252
+    # register_type: holding
+    # name: "Accumulated sell power kWh"
+    # id: sell_kwh
+    # unit_of_measurement: "kWh"
     # accuracy_decimals: 1
     # icon: mdi:flash
     # filters:
       # multiply: 0.1
+  # - platform: template
+    # name: "Accumulated sell power"
+    # unit_of_measurement: kWh
+    # lambda: |-
+     # return (id(sell_mwh).state * 1000.0 + id(sell_kwh).state );
+    # accuracy_decimals: 1
+
   - platform: modbus_controller
-    address: 25248
+    address: 25253
     register_type: holding
-    name: "Accumulated discharger power"
-    unit_of_measurement: "kW"
-    accuracy_decimals: 1
-    icon: mdi:flash
-    filters:
-      multiply: 0.1
-  - platform: modbus_controller
-    address: 25250
-    register_type: holding
-    name: "Accumulated buy power"
-    unit_of_measurement: "kW"
-    accuracy_decimals: 1
-    icon: mdi:flash
-    filters:
-      multiply: 0.1
-  - platform: modbus_controller
-    address: 25252
-    register_type: holding
-    name: "Accumulated sell power"
-    unit_of_measurement: "kW"
-    accuracy_decimals: 1
-    icon: mdi:flash
-    filters:
-      multiply: 0.1
+    # name: "Accumulated load power MWh"
+    id: load_mwh
+    internal: true
+    # unit_of_measurement: "MWh"
+    # accuracy_decimals: 1
+    # icon: mdi:flash
   - platform: modbus_controller
     address: 25254
     register_type: holding
+    # name: "Accumulated load power kWh"
+    id: load_kwh
+    internal: true
+    # unit_of_measurement: "kWh"
+    # accuracy_decimals: 1
+    # icon: mdi:flash
+    filters:
+      multiply: 0.1
+  - platform: template
     name: "Accumulated load power"
-    unit_of_measurement: "kW"
+    unit_of_measurement: kWh
+    lambda: |-
+     return (id(load_mwh).state * 1000.0 + id(load_kwh).state );
     accuracy_decimals: 1
-    icon: mdi:flash
-    filters:
-      multiply: 0.1
-  - platform: modbus_controller
-    address: 25256
-    register_type: holding
-    name: "Accumulated self_use power"
-    unit_of_measurement: "kW"
-    accuracy_decimals: 1
-    icon: mdi:flash
-    filters:
-      multiply: 0.1
-  - platform: modbus_controller
-    address: 25258
-    register_type: holding
-    name: "Accumulated PV_sell power"
-    unit_of_measurement: "kW"
-    accuracy_decimals: 1
-    icon: mdi:flash
-    filters:
-      multiply: 0.1
-  - platform: modbus_controller
-    address: 25260
-    register_type: holding
-    name: "Accumulated grid_charger power"
-    unit_of_measurement: "kW"
-    accuracy_decimals: 1
-    icon: mdi:flash
-    filters:
-      multiply: 0.1
+
+  # - platform: modbus_controller
+    # address: 25255
+    # register_type: holding
+    # name: "Accumulated self_use power MWh"
+    # id: self_use_kwh
+    # unit_of_measurement: "MWh"
+    # accuracy_decimals: 1
+    # icon: mdi:flash
+  # - platform: modbus_controller
+    # address: 25256
+    # register_type: holding
+    # name: "Accumulated self_use power kWh"
+    # id: self_use_mwh
+    # unit_of_measurement: "kWh"
+    # accuracy_decimals: 1
+    # icon: mdi:flash
+    # filters:
+      # multiply: 0.1
+  # - platform: template
+    # name: "Accumulated self_use power"
+    # unit_of_measurement: kWh
+    # lambda: |-
+     # return (id(self_use_mwh).state * 1000.0 + id(self_use_kwh).state );
+    # accuracy_decimals: 1
+
+  # - platform: modbus_controller
+    # address: 25257
+    # register_type: holding
+    # name: "Accumulated PV_sell power MWh"
+    # id: pv_sell_mwh
+    # unit_of_measurement: "MWh"
+    # accuracy_decimals: 1
+    # icon: mdi:flash
+  # - platform: modbus_controller
+    # address: 25258
+    # register_type: holding
+    # name: "Accumulated PV_sell power kWh"
+    # id: pv_sell_kwh
+    # unit_of_measurement: "kWh"
+    # accuracy_decimals: 1
+    # icon: mdi:flash
+    # filters:
+      # multiply: 0.1
+  # - platform: template
+    # name: "Accumulated PV_sell power"
+    # unit_of_measurement: kWh
+    # lambda: |-
+     # return (id(pv_sell_mwh).state * 1000.0 + id(pv_sell_kwh).state );
+    # accuracy_decimals: 1
+
+  # - platform: modbus_controller
+    # address: 25259
+    # register_type: holding
+    # name: "Accumulated grid_charger power MWh"
+    # id: grid_charger_mwh
+    # unit_of_measurement: "MWh"
+    # accuracy_decimals: 1
+    # icon: mdi:flash
+  # - platform: modbus_controller
+    # address: 25260
+    # register_type: holding
+    # name: "Accumulated grid_charger power kWh"
+    # id: grid_charger_kwh
+    # unit_of_measurement: "kWh"
+    # accuracy_decimals: 1
+    # icon: mdi:flash
+    # filters:
+      # multiply: 0.1
+  # - platform: template
+    # name: "Accumulated grid_charger power"
+    # unit_of_measurement: kWh
+    # lambda: |-
+     # return (id(grid_charger_mwh).state * 1000.0 + id(grid_charger_kwh).state );
+    # accuracy_decimals: 1
+
   - platform: modbus_controller
     address: 25273
     register_type: holding
