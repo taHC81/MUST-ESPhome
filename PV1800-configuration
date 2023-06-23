@@ -1,3 +1,5 @@
+# configuration for ESPhome node, to allow changing some inverter/charger parameters remotely.
+# refer to the modbus RTU protocol for more details and options
 number:
   - platform: modbus_controller
     id: batt_float_voltage
