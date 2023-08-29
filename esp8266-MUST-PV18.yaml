@@ -17,12 +17,13 @@ wifi:
   networks:
   - ssid: !secret wifi_ssid
     password: !secret wifi_password
-  # - ssid: !secret wifi_ssid_garage
-    # password: !secret wifi_password
+  - ssid: !secret wifi_ssid_garage
+    password: !secret wifi_password
 
 ota:
 logger:
 api:
+  reboot_timeout: 0s
 
 mqtt:
    broker: 192.168.0.102
@@ -51,7 +52,17 @@ switch:
   - platform: restart
     name: "ESPhome PV18 Restart"
 
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: ESP IP Address
+    ssid:
+      name: ESP Connected SSID
+
 sensor:
+  - platform: wifi_signal
+    name: "WiFi Signal Sensor"
+    update_interval: 60s
   - platform: uptime
     name: Uptime Sensor
 # charger sensors
@@ -171,51 +182,6 @@ sensor:
     icon: mdi:sine-wave
     filters:
       multiply: 0.1
-  # - platform: modbus_controller
-    # address: 25208
-    # name: "Bus voltage"
-    # register_type: holding
-    # unit_of_measurement: "V"
-    # accuracy_decimals: 1
-    # icon: mdi:sine-wave
-    # filters:
-      # multiply: 0.1
-  # - platform: modbus_controller
-    # address: 25209
-    # name: "Control current"
-    # register_type: holding
-    # unit_of_measurement: "A"
-    # accuracy_decimals: 1
-    # icon: mdi:current-dc
-    # filters:
-      # multiply: 0.1
-  # - platform: modbus_controller
-    # address: 25210
-    # name: "Inverter current"
-    # register_type: holding
-    # unit_of_measurement: "A"
-    # accuracy_decimals: 1
-    # icon: mdi:current-dc
-    # filters:
-      # multiply: 0.1
-  # - platform: modbus_controller
-    # address: 25211
-    # name: "Grid current"
-    # register_type: holding
-    # unit_of_measurement: "A"
-    # accuracy_decimals: 1
-    # icon: mdi:current-dc
-    # filters:
-      # multiply: 0.1
-  # - platform: modbus_controller
-    # address: 25212
-    # name: "Load current"
-    # register_type: holding
-    # unit_of_measurement: "A"
-    # accuracy_decimals: 1
-    # icon: mdi:current-dc
-    # filters:
-      # multiply: 0.1
   - platform: modbus_controller
     address: 25213
     name: "Inverter power"
@@ -245,65 +211,24 @@ sensor:
     unit_of_measurement: "%"
     accuracy_decimals: 1
     icon: mdi:flash
-
-# 25217 Inverter complex power(S)	1	VA
-# 25218 Grid complex power(S)		1	VA
-# 25219 Load complex power(S)		1	VA
-# 25221 Inverter reactive power(Q)	1	var
-# 25222 Grid reactive power(Q)		1	var
-# 25223 Load reactive power(Q)		1	var
-# 25225 Inverter frequency			0.01	Hz
-# 25226 Grid frequency				0.01	Hz
-
-  # - platform: modbus_controller
-    # address: 25233
-    # register_type: holding
-    # name: "AC radiator temp"
-    # accuracy_decimals: 1
-    # unit_of_measurement: "°C"
-  # - platform: modbus_controller
-    # address: 25234
-    # register_type: holding
-    # name: "Transformer temp"
-    # unit_of_measurement: "°C"
-    # accuracy_decimals: 1
-  # - platform: modbus_controller
-    # address: 25235
-    # register_type: holding
-    # name: "DC Radiator temp"
-    # unit_of_measurement: "°C"
-    # accuracy_decimals: 1
-  # - platform: modbus_controller
-    # address: 25237
-    # register_type: holding
-    # name: "Inverter Relay"
-    # icon: mdi:electric-switch
-  # - platform: modbus_controller
-    # address: 25238
-    # register_type: holding
-    # name: "Grid Relay"
-    # icon: mdi:electric-switch
-  # - platform: modbus_controller
-    # address: 25239
-    # register_type: holding
-    # name: "Load Relay"
-    # icon: mdi:electric-switch
-  # - platform: modbus_controller
-    # address: 25240
-    # register_type: holding
-    # name: "N_Line Relay"
-    # icon: mdi:electric-switch
-  # - platform: modbus_controller
-    # address: 25241
-    # register_type: holding
-    # name: "DC Relay"
-    # icon: mdi:electric-switch
-  # - platform: modbus_controller
-    # address: 25242
-    # register_type: holding
-    # name: "Earth Relay"
-    # icon: mdi:electric-switch
-
+  - platform: modbus_controller
+    address: 25233
+    register_type: holding
+    name: "AC radiator temp"
+    accuracy_decimals: 1
+    unit_of_measurement: "°C"
+  - platform: modbus_controller
+    address: 25234
+    register_type: holding
+    name: "Transformer temp"
+    unit_of_measurement: "°C"
+    accuracy_decimals: 1
+  - platform: modbus_controller
+    address: 25235
+    register_type: holding
+    name: "DC Radiator temp"
+    unit_of_measurement: "°C"
+    accuracy_decimals: 1
   - platform: modbus_controller
     address: 25247
     register_type: holding
@@ -357,30 +282,30 @@ sensor:
      return (id(buy_mwh).state * 1000.0 + id(buy_kwh).state );
     accuracy_decimals: 1
 
-  # - platform: modbus_controller
-    # address: 25251
-    # register_type: holding
+  - platform: modbus_controller
+    address: 25251
+    register_type: holding
     # name: "Accumulated sell power MWh"
-    # id: sell_mwh
+    id: sell_mwh
     # unit_of_measurement: "MWh"
     # accuracy_decimals: 1
     # icon: mdi:flash
-  # - platform: modbus_controller
-    # address: 25252
-    # register_type: holding
+  - platform: modbus_controller
+    address: 25252
+    register_type: holding
     # name: "Accumulated sell power kWh"
-    # id: sell_kwh
+    id: sell_kwh
     # unit_of_measurement: "kWh"
     # accuracy_decimals: 1
     # icon: mdi:flash
-    # filters:
-      # multiply: 0.1
-  # - platform: template
-    # name: "Accumulated sell power"
-    # unit_of_measurement: kWh
-    # lambda: |-
-     # return (id(sell_mwh).state * 1000.0 + id(sell_kwh).state );
-    # accuracy_decimals: 1
+    filters:
+      multiply: 0.1
+  - platform: template
+    name: "Accumulated sell power"
+    unit_of_measurement: kWh
+    lambda: |-
+     return (id(sell_mwh).state * 1000.0 + id(sell_kwh).state );
+    accuracy_decimals: 1
 
   - platform: modbus_controller
     address: 25253
@@ -408,82 +333,6 @@ sensor:
     lambda: |-
      return (id(load_mwh).state * 1000.0 + id(load_kwh).state );
     accuracy_decimals: 1
-
-  # - platform: modbus_controller
-    # address: 25255
-    # register_type: holding
-    # name: "Accumulated self_use power MWh"
-    # id: self_use_kwh
-    # unit_of_measurement: "MWh"
-    # accuracy_decimals: 1
-    # icon: mdi:flash
-  # - platform: modbus_controller
-    # address: 25256
-    # register_type: holding
-    # name: "Accumulated self_use power kWh"
-    # id: self_use_mwh
-    # unit_of_measurement: "kWh"
-    # accuracy_decimals: 1
-    # icon: mdi:flash
-    # filters:
-      # multiply: 0.1
-  # - platform: template
-    # name: "Accumulated self_use power"
-    # unit_of_measurement: kWh
-    # lambda: |-
-     # return (id(self_use_mwh).state * 1000.0 + id(self_use_kwh).state );
-    # accuracy_decimals: 1
-
-  # - platform: modbus_controller
-    # address: 25257
-    # register_type: holding
-    # name: "Accumulated PV_sell power MWh"
-    # id: pv_sell_mwh
-    # unit_of_measurement: "MWh"
-    # accuracy_decimals: 1
-    # icon: mdi:flash
-  # - platform: modbus_controller
-    # address: 25258
-    # register_type: holding
-    # name: "Accumulated PV_sell power kWh"
-    # id: pv_sell_kwh
-    # unit_of_measurement: "kWh"
-    # accuracy_decimals: 1
-    # icon: mdi:flash
-    # filters:
-      # multiply: 0.1
-  # - platform: template
-    # name: "Accumulated PV_sell power"
-    # unit_of_measurement: kWh
-    # lambda: |-
-     # return (id(pv_sell_mwh).state * 1000.0 + id(pv_sell_kwh).state );
-    # accuracy_decimals: 1
-
-  # - platform: modbus_controller
-    # address: 25259
-    # register_type: holding
-    # name: "Accumulated grid_charger power MWh"
-    # id: grid_charger_mwh
-    # unit_of_measurement: "MWh"
-    # accuracy_decimals: 1
-    # icon: mdi:flash
-  # - platform: modbus_controller
-    # address: 25260
-    # register_type: holding
-    # name: "Accumulated grid_charger power kWh"
-    # id: grid_charger_kwh
-    # unit_of_measurement: "kWh"
-    # accuracy_decimals: 1
-    # icon: mdi:flash
-    # filters:
-      # multiply: 0.1
-  # - platform: template
-    # name: "Accumulated grid_charger power"
-    # unit_of_measurement: kWh
-    # lambda: |-
-     # return (id(grid_charger_mwh).state * 1000.0 + id(grid_charger_kwh).state );
-    # accuracy_decimals: 1
-
   - platform: modbus_controller
     address: 25273
     register_type: holding
@@ -500,3 +349,80 @@ sensor:
     unit_of_measurement: "A"
     accuracy_decimals: 1
     icon: mdi:current-dc
+
+select:
+  - platform: modbus_controller
+    id: energy_use_mode
+    name: "Energy use mode"
+    address: 20109
+    optionsmap:
+      "SBU": 1
+      "SUB": 2
+      "UTI": 3
+      "SOL": 4
+
+number:
+  - platform: modbus_controller
+    id: batt_float_voltage
+    name: "Float voltage"
+    unit_of_measurement: "V"
+    address: 10103
+    value_type: U_WORD
+    lambda: "return x * 0.1; "
+    write_lambda: |-
+      return x * 10 ;
+  - platform: modbus_controller
+    id: batt_absorb_voltage
+    name: "Absorb voltage"
+    unit_of_measurement: "V"
+    address: 10104
+    value_type: U_WORD
+    lambda: "return x * 0.1; "
+    write_lambda: |-
+      return x * 10 ;
+
+  - platform: modbus_controller
+    id: batt_stop_dischg
+    name: "Battery stop discharging voltage"
+    unit_of_measurement: "V"
+    address: 20118
+    value_type: U_WORD
+    lambda: "return x * 0.1; "
+    write_lambda: |-
+      return x * 10 ;
+  - platform: modbus_controller
+    id: batt_stop_chg
+    name: "Battery stop charging voltage"
+    unit_of_measurement: "V"
+    address: 20119
+    value_type: U_WORD
+    lambda: "return x * 0.1; "
+    write_lambda: |-
+      return x * 10 ;
+  - platform: modbus_controller
+    id: batt_low_voltage
+    name: "Battery low voltage"
+    unit_of_measurement: "V"
+    address: 20127
+    value_type: U_WORD
+    lambda: "return x * 0.1; "
+    write_lambda: |-
+      return x * 10 ;
+  - platform: modbus_controller
+    id: batt_high_voltage
+    name: "Battery high voltage"
+    unit_of_measurement: "V"
+    address: 20128
+    value_type: U_WORD
+    lambda: "return x * 0.1; "
+    write_lambda: |-
+      return x * 10 ;
+  - platform: modbus_controller
+    id: solar_charger_current
+    name: "Charger current"
+    unit_of_measurement: "A"
+    address: 20132
+    value_type: U_WORD
+    lambda: "return x * 0.1; "
+    write_lambda: |-
+      return x * 10 ;
