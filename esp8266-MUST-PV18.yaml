@@ -353,13 +353,21 @@ sensor:
 select:
   - platform: modbus_controller
     id: energy_use_mode
-    name: "Energy use mode"
+    name: "Energy use mode (parameter 00)"
     address: 20109
     optionsmap:
-      "SBU": 1
-      "SUB": 2
-      "UTI": 3
-      "SOL": 4
+      "SBU (Solar/battery/utility)": 1
+      "SUB (Solar/utility/battery)": 2
+      "UTI (Utility only)": 3
+      "SOL (Solar only)": 4
+  - platform: modbus_controller
+    id: charger_source_priority
+    name: "Charger source priority (parameter 10)"
+    address: 20143
+    optionsmap:
+      "CSO (Solar first)": 0
+      "SNU (Solar and utility)": 2
+      "OSO (Solar only)": 3
 
 number:
   - platform: modbus_controller
